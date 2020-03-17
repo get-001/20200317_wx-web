@@ -1,5 +1,5 @@
 import { req } from "./tool/Req";
-import { BaseRequest, SyncKey } from "./Types";
+import { BaseRequest, SyncKey, Dynamic } from "./Types";
 import { Examples } from "./Examples";
 
 /**
@@ -109,10 +109,10 @@ export class Heartbeat {
         url: this.stateUrl,
         data: JSON.stringify(submit_data)
       })
-      .then((data: string | object) => {
-        data = JSON.parse(data as string);
-        this.SyncKey = data["SyncCheckKey"];
-        this.port_Examples.onReceiveDynamic(data as object);
+      .then((data: string) => {
+        const dynamicData: Dynamic = JSON.parse(data as string);
+        this.SyncKey = dynamicData["SyncCheckKey"];
+        this.port_Examples.onReceiveDynamic(dynamicData);
       });
   }
 }
