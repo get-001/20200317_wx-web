@@ -68,7 +68,6 @@ export class Heartbeat {
         }&synckey=${this.getFormateSyncCheckKey(this.SyncKey)}`
       })
       .then((data: any) => {
-        console.log(data);
         data = data.match(
           /^window.synccheck={retcode:"([\d]+)",selector:"([\d]+)"}$/
         );
@@ -85,7 +84,7 @@ export class Heartbeat {
           }, 2000);
           // 正常连接 - 判断是否需要同步动态
           /*
-           * synccheck["selector"]  0 -- 不需要同步动态  2 -- 有新的动态
+           * synccheck["selector"]  0 -- 不需要同步动态  2 -- 有新的动态  4 -- 修改名片备注  1|5 -- 资料更新(更名)
            */
           if (synccheck["selector"] !== 0) {
             this.receiveState();

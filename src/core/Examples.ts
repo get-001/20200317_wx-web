@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Login } from "./Login";
-import { initData, BaseRequest, Dynamic, ContactAll } from "./Types";
+import { initData, BaseRequest, Dynamic, ContactAll, Member } from "./Types";
 import wxConfig from "./wxConfig";
 import { req } from "./tool/Req";
 import { Heartbeat } from "./Heartbeat";
@@ -38,6 +38,7 @@ export class Examples {
 
   constructor() {
     // 开始登录时创建缓存目录
+    fs.existsSync(this.cachePath) || fs.mkdirSync(this.cachePath);
     this.login();
   }
 
@@ -54,10 +55,12 @@ export class Examples {
       key_data.SyncKey,
       key_data.submit_stateUrl
     );
+
     setInterval(() => {
       // 消息发送测试
-      this.sendMessage("filehelper", `- 测试 ${-new Date()}`);
-    }, 5000);
+      // this.sendMessage("filehelper", `- 测试 ${-new Date()}`);
+      this.loginout();
+    }, 15000);
   }
   onRuit(statusCode) {
     // 退出登录时清空缓存目录
@@ -65,17 +68,22 @@ export class Examples {
   }
   onReceiveDynamic(dynamicData: Dynamic) {
     // 接收新动态事件(消息)
-    console.log(
-      dynamicData.AddMsgList.length,
-      dynamicData.AddMsgList.map(({ MsgType, FileName, Content }) => {
-        return { MsgType, FileName, Content };
-      })
+    let dataArr = dynamicData.AddMsgList.filter(
+      ({ MsgType }) => MsgType !== 51
     );
-    const arr = dynamicData.AddMsgList.filter(({ MsgType }) => MsgType !== 51);
-    if (arr.length === 0) return;
-    arr.forEach(data => {
-      console.log(data.MsgType + "  --  ", data.Content);
-    });
+    if (dataArr.length === 0) return;
+
+    // -------------------------------------------------------------
+    const MemberList: Member[] = this.contactAll.MemberList;
+    dataArr = dataArr.map(({ MsgType, ToUserName, Content }) => {
+      let NickName = "";
+      MemberList.forEach(member => {
+        if (ToUserName === member.UserName) NickName = member.NickName;
+      });
+      return { MsgType, ToUserName, NickName, Content };
+    }) as [];
+    console.log(JSON.stringify(dataArr));
+    // -------------------------------------------------------------
 
     this.writeFile(
       this.cachePath + "dynamic.json",
@@ -117,6 +125,32 @@ export class Examples {
       type: "POST",
       url: "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg",
       data: JSON.stringify(submit_data)
+    });
+  }
+  // 获取语音
+  getVoiceUrl(msgid: string) {
+    return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetvoice?msgid=${msgid}&skey=${this.key_data.BaseRequest.SKey}`;
+  }
+  // 获取图片
+  getImageUrl(msgid: string, artwork: boolean = true) {
+    return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetmsgimg?MsgID=${msgid}&skey=${
+      this.key_data.BaseRequest.SKey
+    }${artwork && "&type=slave"}`;
+  }
+  loginout() {
+    console.log("xxxxxxxxxxxxxxxxxxxxxxx");
+    const { BaseRequest } = this.key_data;
+    BaseRequest.DeviceID = this.DeviceID;
+    req.http({
+      type: "POST",
+      url:
+        "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatreport?fun=new&lang=zh_CN",
+      data: JSON.stringify({
+        BaseRequest: BaseRequest,
+        Count: 1,
+        List:
+          '[{"Type":1,"Text":"{"type":"[session-data]","data":{"uin":1785889460,"browser":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 UBrowser/6.2.4098.3 Safari/537.36","rmsg":0,"rconv":0,"smsg":0,"sconv":0,"lifetime":100357}}"}]'
+      })
     });
   }
 }

@@ -1,0 +1,75 @@
+{
+  "BaseRequest": {
+    "DeviceID": "e606208606583289",
+    "Sid": "E8ojZ5Ez57ehdjtr",
+    "Uin": "1785889460",
+    "SKey": "@crypt_fa64c36f_cfcb5b72d9ceca438cb06459169817c4"
+  },
+  "SyncKey": {
+    "Count": 8,
+    "List": [
+      {
+        "Key": 1,
+        "Val": 708753137
+      },
+      {
+        "Key": 2,
+        "Val": 708753187
+      },
+      {
+        "Key": 3,
+        "Val": 708753139
+      },
+      {
+        "Key": 11,
+        "Val": 708753115
+      },
+      {
+        "Key": 201,
+        "Val": 1584469036
+      },
+      {
+        "Key": 206,
+        "Val": 3
+      },
+      {
+        "Key": 1000,
+        "Val": 1584453605
+      },
+      {
+        "Key": 1001,
+        "Val": 1584449659
+      }
+    ]
+  },
+  "wx_key": {
+    "ret": "0",
+    "skey": "@crypt_fa64c36f_cfcb5b72d9ceca438cb06459169817c4",
+    "wxsid": "E8ojZ5Ez57ehdjtr",
+    "wxuin": "1785889460",
+    "passticket": "Pb0al1%2F6SzvPnQLlygjohMfYvJbaKdYVn6ctCcQqet5%2BTN4DX64NzWRt28ZxVS3Z",
+    "message": ""
+  },
+  "submit_stateUrl": "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid=E8ojZ5Ez57ehdjtr&skey=@crypt_fa64c36f_cfcb5b72d9ceca438cb06459169817c4&lang=zh_CN&pass_ticket=Pb0al1%2F6SzvPnQLlygjohMfYvJbaKdYVn6ctCcQqet5%2BTN4DX64NzWRt28ZxVS3Z",
+  "User": {
+    "Uin": 1785889460,
+    "UserName": "@21d936edcfbc2ca680de109e51de18fd",
+    "NickName": "จุ๊บ꯭ 俊꯭杰꯭、",
+    "HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=466310127&username=@21d936edcfbc2ca680de109e51de18fd&skey=@crypt_fa64c36f_cfcb5b72d9ceca438cb06459169817c4",
+    "RemarkName": "",
+    "PYInitial": "",
+    "PYQuanPin": "",
+    "RemarkPYInitial": "",
+    "RemarkPYQuanPin": "",
+    "HideInputBarFlag": 0,
+    "StarFriend": 0,
+    "Sex": 1,
+    "Signature": "不忘初心，方得始终。",
+    "AppAccountFlag": 0,
+    "VerifyFlag": 0,
+    "ContactFlag": 0,
+    "WebWxPluginSwitch": 0,
+    "HeadImgFlag": 1,
+    "SnsFlag": 401
+  }
+}
