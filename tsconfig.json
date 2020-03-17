@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist" /* 将输出结构重定向到目录。 */,
+    "target": "es2017" /* 指定ECMAScript目标版本: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+    "module": "commonjs" /* 指定模块代码生成: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
+    "lib": ["es2017"] /* 指定要包含在编译中的库文件。 */,
+    // "sourceMap": true /* 生成相应的代码地图，报错时容易定位 '.map' file. */,
+    // "strict": true /* 启用所有严格的类型检查选项。 */,
+    // "removeComments": true /* 不要将注释发送到输出。 */,
+    "esModuleInterop": true /* 通过为所有导入创建命名空间对象，支持CommonJS和ES模块之间的互操作性。意味着“allowSyntheticDefaultImports”。 */,
+    "moduleResolution": "node" /* 模块解析方式 */,
+    "isolatedModules": true /* 强制要求每一个ts文件必须是一个模块 */
+  },
+  "include": ["./src"]
+}
