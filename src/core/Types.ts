@@ -16,8 +16,9 @@ export interface wx_key {
 
 export interface SyncKey {
   Count: number;
-  List: object[];
+  List: { Key: number; Val: number }[];
 }
+
 export interface User {
   Uin: number;
   UserName: string;

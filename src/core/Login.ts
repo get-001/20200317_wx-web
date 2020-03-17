@@ -55,7 +55,6 @@ export class Login {
      *      400：未知
      *      500：login poll srv exception
      */
-    console.log(data);
     if (data["code"] == 201) {
       // 获取头像
       this.getHeadPortrait(data["userAvatar"]);
@@ -136,7 +135,7 @@ export class Login {
           if (SyncKey.Count >= 8) {
             // 出口 - 初始化完成
             console.log(" -- 初始化完成 and Login END");
-            this.port_init.init({
+            this.port_init.onLoad({
               BaseRequest: this.BaseRequest,
               SyncKey,
               wx_key: this.wx_key,

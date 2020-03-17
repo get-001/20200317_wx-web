@@ -35,10 +35,15 @@ export class Examples {
   }
 
   constructor() {
-    new Login(this);
+    // 开始登录时创建缓存目录
+    this.login();
   }
 
-  init(key_data: initData) {
+  login() {
+    new Login(this);
+  }
+  onLoad(key_data: initData) {
+    // 微信登录成功开始初始化
     this.key_data = key_data; // 写入关键信息
     this.getContactAll(); // 获取完整的通讯录数据
     new Heartbeat(
@@ -48,7 +53,27 @@ export class Examples {
       key_data.submit_stateUrl
     );
   }
+  onRuit(statusCode) {
+    // 退出登录时清空缓存目录
+    console.log(statusCode, " -- 微信退出登陆");
+  }
+  onReceiveDynamic(data: object) {
+    // 接收新动态事件(消息)
+    console.log(
+      data["AddMsgList"].length,
+      data["AddMsgList"].map(({ MsgType }) => MsgType)
+    );
+    // 51
+    const arr = data["AddMsgList"].filter(({ MsgType }) => MsgType != 51);
+    if (arr.length !== 0) {
+      this.writeFile(
+        this.cachePath + "dynamic.json",
+        JSON.stringify(data, null, 2)
+      );
+    }
+  }
   getContactAll() {
+    // 获取完整的通讯录数据
     const {
       BaseRequest: { SKey }
     } = this.key_data;

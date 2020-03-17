@@ -68,6 +68,7 @@ export class Heartbeat {
         }&synckey=${this.getFormateSyncCheckKey(this.SyncKey)}`
       })
       .then((data: any) => {
+        console.log(data);
         data = data.match(
           /^window.synccheck={retcode:"([\d]+)",selector:"([\d]+)"}$/
         );
@@ -75,28 +76,28 @@ export class Heartbeat {
           retcode: parseInt(data[1]),
           selector: parseInt(data[2])
         };
-        console.log(synccheck);
         /*
          * synccheck['retcode'] : 0==正常连接 1101||1102==退出 1100 == 重载
          */
         if (synccheck["retcode"] == 0) {
           setTimeout(() => {
             this.maintain(); // 递归 - 继续监控动态
-          }, 500);
+          }, 2000);
           // 正常连接 - 判断是否需要同步动态
           /*
            * synccheck["selector"]  0 -- 不需要同步动态  2 -- 有新的动态
            */
           if (synccheck["selector"] !== 0) {
-            this.acceptingState();
+            this.receiveState();
           }
         } else {
-          // 连接异常
-          console.log(synccheck["retcode"], " - 微信退出登陆");
+          // 连接异常 - 微信退出登陆
+          this.port_Examples.onRuit(synccheck["retcode"]);
         }
       });
   }
-  private acceptingState() {
+  private receiveState() {
+    this.BaseRequest = { ...this.BaseRequest, DeviceID: this.DeviceID };
     const submit_data = {
       BaseRequest: this.BaseRequest,
       SyncKey: this.SyncKey,
@@ -108,17 +109,10 @@ export class Heartbeat {
         url: this.stateUrl,
         data: JSON.stringify(submit_data)
       })
-      .then((data: string) => {
-        data = JSON.parse(data);
-        this.SyncKey = data["SyncKey"];
-        console.log(data["AddMsgList"].length);
-        // if (data["AddMsgList"].length != 0) {
-        //   // fs.writeFileSync(
-        //   //   "./wx/cache/info.json",
-        //   //   // JSON.stringify(data["AddMsgList"], null, 2)
-        //   //   JSON.stringify(data, null, 2)
-        //   // ); // 写入到文件
-        // }
+      .then((data: string | object) => {
+        data = JSON.parse(data as string);
+        this.SyncKey = data["SyncCheckKey"];
+        this.port_Examples.onReceiveDynamic(data as object);
       });
   }
 }
