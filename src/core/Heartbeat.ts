@@ -1,5 +1,5 @@
 import { req } from "./tool/Req";
-import { BaseRequest, SyncKey, Dynamic } from "./Types";
+import { BaseRequest, SyncKey, Dynamic, initData } from "./Types";
 import { Examples } from "./Examples";
 
 /**
@@ -18,54 +18,29 @@ export class Heartbeat {
     }
     return synccheckkeyFormat.join("|");
   }
-  public get DeviceID(): string {
-    return "e" + ("" + Math.random().toFixed(15)).substring(2, 17);
-  }
 
-  private get BaseRequest(): BaseRequest {
-    return this._BaseRequest;
+  get key_data(): initData {
+    return this.port_Examples.key_data;
   }
-  private set BaseRequest(val: BaseRequest) {
-    this.port_Examples.key_data = {
-      ...this.port_Examples.key_data,
-      BaseRequest: val
-    };
-    this._BaseRequest = val;
-  }
-  private get SyncKey(): SyncKey {
-    return this._SyncKey;
-  }
-  private set SyncKey(val: SyncKey) {
-    this.port_Examples.key_data = {
-      ...this.port_Examples.key_data,
-      SyncKey: val
-    };
-    this._SyncKey = val;
-  }
-  private get stateUrl(): string {
-    return this._stateUrl;
+  set key_data(val: initData) {
+    this.port_Examples.key_data = val;
   }
 
   constructor(
-    private port_Examples: Examples,
-    private _BaseRequest: BaseRequest,
-    private _SyncKey: SyncKey,
-    private _stateUrl: string
+    private port_Examples: Examples // private _BaseRequest: BaseRequest, // private _SyncKey: SyncKey,
   ) {
     this.maintain(); // 维持心跳
   }
 
   private maintain() {
-    this.BaseRequest = { ...this.BaseRequest, DeviceID: this.DeviceID };
+    const { BaseRequest, SyncKey } = this.key_data;
     req
       .http({
         url: `https://webpush.wx2.qq.com/cgi-bin/mmwebwx-bin/synccheck?r=${+new Date()}&skey=${
-          this.BaseRequest["SKey"]
-        }&sid=${this.BaseRequest["Sid"]}&uin=${
-          this.BaseRequest["Uin"]
-        }&deviceid=${
-          this.BaseRequest["DeviceID"]
-        }&synckey=${this.getFormateSyncCheckKey(this.SyncKey)}`
+          BaseRequest["SKey"]
+        }&sid=${BaseRequest["Sid"]}&uin=${BaseRequest["Uin"]}&deviceid=${
+          BaseRequest["DeviceID"]
+        }&synckey=${this.getFormateSyncCheckKey(SyncKey)}`
       })
       .then((data: any) => {
         data = data.match(
@@ -96,21 +71,24 @@ export class Heartbeat {
       });
   }
   private receiveState() {
-    this.BaseRequest = { ...this.BaseRequest, DeviceID: this.DeviceID };
+    const { BaseRequest, SyncKey, submit_stateUrl } = this.key_data;
     const submit_data = {
-      BaseRequest: this.BaseRequest,
-      SyncKey: this.SyncKey,
+      BaseRequest: BaseRequest,
+      SyncKey: SyncKey,
       rr: ~new Date()
     };
     req
       .http({
         type: "POST",
-        url: this.stateUrl,
+        url: submit_stateUrl,
         data: JSON.stringify(submit_data)
       })
       .then((data: string) => {
         const dynamicData: Dynamic = JSON.parse(data as string);
-        this.SyncKey = dynamicData["SyncCheckKey"];
+        this.key_data = {
+          ...this.key_data,
+          SyncKey: dynamicData["SyncCheckKey"]
+        };
         this.port_Examples.onReceiveDynamic(dynamicData);
       });
   }

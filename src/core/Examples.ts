@@ -10,11 +10,11 @@ export class Examples {
   private writeFile(path: string, content: string) {
     fs.writeFile(path, content, () => {}); // 写入到文件
   }
-  public get DeviceID(): string {
-    return "e" + ("" + Math.random().toFixed(15)).substring(2, 17);
-  }
   private _key_data?: initData;
   get key_data(): initData {
+    const DeviceID = "e" + ("" + Math.random().toFixed(15)).substring(2, 17);
+    this._key_data.BaseRequest["DeviceID"] = DeviceID;
+    this.key_data = this._key_data;
     return this._key_data;
   }
   set key_data(val: initData) {
@@ -49,12 +49,7 @@ export class Examples {
     // 微信登录成功开始初始化
     this.key_data = key_data; // 写入关键信息
     this.getContactAll(); // 获取完整的通讯录数据
-    new Heartbeat(
-      this,
-      key_data.BaseRequest,
-      key_data.SyncKey,
-      key_data.submit_stateUrl
-    );
+    new Heartbeat(this);
 
     // setInterval(() => {
     // 消息发送测试
@@ -91,29 +86,31 @@ export class Examples {
   }
   getContactAll() {
     // 获取完整的通讯录数据
-    const {
-      BaseRequest: { SKey }
-    } = this.key_data;
+    const { BaseRequest } = this.key_data;
     req
       .http({
-        url: `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?lang=zh_CN&seq=0&SKey=${SKey}`
+        url: `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?lang=zh_CN&seq=0&SKey=${BaseRequest.SKey}`
       })
       .then((data: string) => {
         const contactAll = JSON.parse(data);
         this.contactAll = contactAll;
       });
   }
+  /**
+   * 发送消息
+   * @param {string} toUserName 发送人ID
+   * @param {string} content 需要发送的文本消息
+   * @memberof Examples
+   */
   sendMessage(toUserName: string, content: string) {
-    const { BaseRequest } = this.key_data;
-    BaseRequest.DeviceID = this.DeviceID;
-    this.key_data = { ...this.key_data, BaseRequest };
+    const { BaseRequest, User } = this.key_data;
     const MsgId = (Date.now() + Math.random().toFixed(3)).replace(".", "");
     const submit_data = {
       BaseRequest: BaseRequest,
       Msg: {
         ClientMsgId: MsgId,
         Content: content,
-        FromUserName: this.key_data.User.UserName,
+        FromUserName: User.UserName,
         LocalID: MsgId,
         ToUserName: toUserName,
         Type: 1
@@ -128,12 +125,14 @@ export class Examples {
   }
   // 获取语音
   getVoiceUrl(msgid: string) {
-    return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetvoice?msgid=${msgid}&skey=${this.key_data.BaseRequest.SKey}`;
+    const { BaseRequest } = this.key_data;
+    return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetvoice?msgid=${msgid}&skey=${BaseRequest.SKey}`;
   }
   // 获取图片
   getImageUrl(msgid: string, artwork: boolean = true) {
+    const { BaseRequest } = this.key_data;
     return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetmsgimg?MsgID=${msgid}&skey=${
-      this.key_data.BaseRequest.SKey
+      BaseRequest.SKey
     }${artwork && "&type=slave"}`;
   }
 }
