@@ -38,9 +38,18 @@ export class Req {
     });
   }
   download(url: string, fileName: string) {
+    const options = {
+      url,
+      charset: "utf-8",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36"
+      },
+      jar: this._jar
+    };
     return new Promise((resolve, reject) => {
       const stream = fs.createWriteStream(fileName);
-      request(url)
+      request(options)
         .pipe(stream)
         .on("close", function(error, response, conent) {
           error ? reject(error) : resolve();
