@@ -56,11 +56,10 @@ export class Examples {
       key_data.submit_stateUrl
     );
 
-    setInterval(() => {
-      // 消息发送测试
-      // this.sendMessage("filehelper", `- 测试 ${-new Date()}`);
-      this.loginout();
-    }, 15000);
+    // setInterval(() => {
+    // 消息发送测试
+    // this.sendMessage("filehelper", `- 测试 ${-new Date()}`);
+    // }, 15000);
   }
   onRuit(statusCode) {
     // 退出登录时清空缓存目录
@@ -136,28 +135,5 @@ export class Examples {
     return `https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetmsgimg?MsgID=${msgid}&skey=${
       this.key_data.BaseRequest.SKey
     }${artwork && "&type=slave"}`;
-  }
-  loginout() {
-    console.log("xxxxxxxxxxxxxxxxxxxxxxx");
-    const { BaseRequest } = this.key_data;
-    BaseRequest.DeviceID = this.DeviceID;
-    req.http({
-      type: "POST",
-      url:
-        "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatreport?fun=new&lang=zh_CN",
-      data: JSON.stringify({
-        BaseRequest: BaseRequest,
-        Count: 1,
-        List: [
-          {
-            Type: 1,
-            Text:
-              '{"type":"[session-data]","data":{"uin":' +
-              BaseRequest.Uin +
-              ',"browser":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 UBrowser/6.2.4098.3 Safari/537.36","rmsg":0,"rconv":0,"smsg":0,"sconv":0,"lifetime":11122}}'
-          }
-        ]
-      })
-    });
   }
 }
