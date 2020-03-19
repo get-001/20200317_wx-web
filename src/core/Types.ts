@@ -91,7 +91,7 @@ type BaseResponse = {
 export interface ContactAll {
   BaseResponse: BaseResponse;
   MemberCount: number;
-  MemberList: Member[];
+  MemberList?: Member[];
   Seq: number;
 }
 
@@ -183,4 +183,20 @@ export interface Dynamic {
   SyncKey: SyncKey;
   SKey: string;
   SyncCheckKey: SyncKey;
+}
+export interface Message {
+  type: string;
+  initiative: boolean;
+  MsgId: string;
+  CreateTime: number;
+  contact: {
+    type: string;
+    id: string;
+    name: string;
+    children: {
+      id: string;
+      name: string;
+    } | null;
+  };
+  data: object | string | null;
 }

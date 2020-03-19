@@ -2,7 +2,7 @@ import request from "request";
 import fs from "fs";
 
 export class Req {
-  private _jar: request.CookieJar = request.jar();
+  _jar: request.CookieJar = request.jar();
   cookiesParse(url: string) {
     const cookiesParse = {};
     this._jar
@@ -48,10 +48,9 @@ export class Req {
       jar: this._jar
     };
     return new Promise((resolve, reject) => {
-      const stream = fs.createWriteStream(fileName);
       request(options)
-        .pipe(stream)
-        .on("close", function(error, response, conent) {
+        .pipe(fs.createWriteStream(fileName))
+        .on("close", function(error) {
           error ? reject(error) : resolve();
         });
     });
